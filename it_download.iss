@@ -1,5 +1,11 @@
+#ifndef id_download
+
+#define id_download
+
+#define ITD_Path ExtractFilePath(__PATHFILENAME__)
+
 [Files]
-Source: {#emit ReadReg(HKEY_LOCAL_MACHINE,'Software\Sherlock Software\InnoTools\Downloader','InstallPath','')}\itdownload.dll; Flags: dontcopy; DestDir: {tmp}
+Source: {#ITD_Path}\itdownload.dll; Flags: dontcopy; DestDir: {tmp}
 
 [Code]
 (*
@@ -322,3 +328,5 @@ begin
   setlength(ansiResult, itd_internal_getoption(PAnsiChar(AnsiString(option)), PAnsiChar(ansiResult), length(ansiResult)));
   result := string(ansiResult);
 end;
+
+#endif
