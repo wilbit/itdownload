@@ -54,43 +54,43 @@ procedure ITD_Cancel;
 procedure ITD_ClearFiles;
   external 'itd_clearfiles@files:itdownload.dll stdcall';
 
-function ITD_DownloadFile(url: PChar; destfilename: PChar): integer;
+function ITD_DownloadFile(url, destfilename: PAnsiChar): integer;
   external 'itd_downloadfile@files:itdownload.dll stdcall';
 
 function ITD_GetResultLen: integer;
   external 'itd_getresultlen@files:itdownload.dll stdcall';
 
-procedure ITD_GetResultString(buffer: pchar; maxlen: integer);
+procedure ITD_GetResultString(buffer: PAnsiChar; maxlen: integer);
   external 'itd_getresultstring@files:itdownload.dll stdcall';
 
 procedure ITD_Internal_InitUI(HostHwnd: dword);
   external 'itd_initui@files:itdownload.dll stdcall';
 
-function ITD_Internal_LoadStrings(filename: PChar): boolean;
+function ITD_Internal_LoadStrings(filename: PAnsiChar): boolean;
   external 'itd_loadstrings@files:itdownload.dll stdcall';
 
-procedure ITD_Internal_SetOption(option, value: PChar);
+procedure ITD_Internal_SetOption(option, value: PAnsiChar);
   external 'itd_setoption@files:itdownload.dll stdcall';
 
-function ITD_Internal_GetFileSize(url: pchar; var size: Cardinal): boolean;
+function ITD_Internal_GetFileSize(url: PAnsiChar; var size: Cardinal): boolean;
   external 'itd_getfilesize@files:itdownload.dll stdcall';
 
 function ITD_Internal_GetString(index: integer): boolean;
   external 'itd_getstring@files:itdownload.dll stdcall';
 
-function ITD_Internal_GetOption(option: PChar; buffer: PChar; length: integer): integer;
+function ITD_Internal_GetOption(option, buffer: PAnsiChar; length: integer): integer;
   external 'itd_getoption@files:itdownload.dll stdcall';
 
-procedure ITD_Internal_SetString(index: integer; value: PChar);
+procedure ITD_Internal_SetString(index: integer; value: PAnsiChar);
   external 'itd_setstring@files:itdownload.dll stdcall';
 
-procedure ITD_Internal_AddFile(url: PChar; destfilename: PChar);
+procedure ITD_Internal_AddFile(url, destfilename: PAnsiChar);
   external 'itd_addfile@files:itdownload.dll stdcall';
 
-procedure ITD_Internal_AddMirror(url: PChar; destfilename: PChar);
+procedure ITD_Internal_AddMirror(url, destfilename: PAnsiChar);
   external 'itd_addmirror@files:itdownload.dll stdcall';
 
-procedure ITD_Internal_AddFileSize(url: PChar; destfilename: PChar; size: integer);
+procedure ITD_Internal_AddFileSize(url, destfilename: PAnsiChar; size: integer);
   external 'itd_addfilesize@files:itdownload.dll stdcall';
 
 function ITD_Internal_DownloadFiles(surface: hwnd): integer;
@@ -99,7 +99,7 @@ function ITD_Internal_DownloadFiles(surface: hwnd): integer;
 function ITD_FileCount: integer;
   external 'itd_filecount@files:itdownload.dll stdcall';
 
-function ITD_Internal_PostPage(url, buffer: PChar; length: integer): boolean;
+function ITD_Internal_PostPage(url, buffer: PAnsiChar; length: integer): boolean;
   external 'itd_postpage@files:itdownload.dll stdcall';
 
 
@@ -173,7 +173,7 @@ end;
 
 function ITD_GetFileSize(const url: string; var size: cardinal): boolean;
 begin
-  result := itd_internal_getfilesize(PChar(url), size);
+  result := itd_internal_getfilesize(PAnsiChar(url), size);
 end;
 
 function ITD_LoadStrings(const filename: string): boolean;
@@ -182,10 +182,13 @@ begin
 end;
 
 function ITD_GetString(index: integer): string;
+var
+  ansiResult: AnsiString;
 begin
   itd_internal_getstring(index);
-  setlength(result, ITD_GetResultLen);
-  ITD_GetResultString(PChar(result), length(result));
+  setlength(ansiResult, ITD_GetResultLen);
+  ITD_GetResultString(PAnsiChar(ansiResult), length(ansiResult));
+  result := string(ansiResult);
 end;
 
 procedure ITD_NowDoDownload(sender: TWizardPage);
@@ -271,11 +274,11 @@ end;
 
 function ITD_PostPage(const url, data: string; out response: string): boolean;
 begin
-  result := ITD_Internal_PostPage(PChar(url), PChar(data), length(data));
+  result := ITD_Internal_PostPage(PAnsiChar(AnsiString(url)), PAnsiChar(AnsiString(data)), length(data));
 
   if result then begin
     setlength(response, ITD_GetResultLen);
-    ITD_GetResultString(PChar(response), length(response));
+    ITD_GetResultString(PAnsiChar(AnsiString(response)), length(response));
   end;
 end;
 
@@ -312,7 +315,10 @@ begin
 end;
 
 function ITD_GetOption(const option: string): string;
+var
+  ansiResult: AnsiString;
 begin
-  setlength(result, 500);
-  setlength(result, itd_internal_getoption(pchar(option), pchar(result), length(result)));
+  setlength(ansiResult, 500);
+  setlength(ansiResult, itd_internal_getoption(PAnsiChar(AnsiString(option)), PAnsiChar(ansiResult), length(ansiResult)));
+  result := string(ansiResult);
 end;
