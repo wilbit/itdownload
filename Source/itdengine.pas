@@ -780,7 +780,8 @@ begin
       filestream := TFileStream.Create(f.filename, fmCreate or fmShareDenyNone);
       try
         success := false;
-        for url in f.urls do begin
+        for i := 0 to length(f.urls) - 1 do begin
+          url := f.urls[i];
           if FWE.DownloadWebFileToStream(url, filestream, f) then begin
             success := true;
             break;

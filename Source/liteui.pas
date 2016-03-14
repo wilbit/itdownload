@@ -13,6 +13,8 @@ uses SysUtils, windows, messages, commctrl, contnrs, ProcedureToMethod;
  specially}
 const CM_BASE = WM_USER + 100;
   CM_COMMAND = CM_BASE;
+  PBS_MARQUEE = 8;
+  PBM_SETMARQUEE = WM_USER + 10;
 
 const CLASS_LITEUI_LABEL = 'LiteUI_Label';
 CLASS_LITEUI_PANEL = 'LiteUI_Panel';
