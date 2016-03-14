@@ -257,6 +257,7 @@ end;
 procedure TDownloadEngine.SetOptions(http: THTTPSend);
 begin
   http.UserAgent:=fagent;
+  http.Protocol := '1.1';
   SetProxy(http);
 end;
 
